@@ -1,0 +1,80 @@
+#!/usr/bin/perl
+#
+# Find contacts searching within a .vcf file
+# (c) 2017 Daniel Lange, Faster IT GmbH
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+# IN THE SOFTWARE.
+#
+# DL170203 Initial version
+# DL170209 Improve semicolon removals, open source under the MIT license
+#
+
+use File::Basename;
+use File::Spec;
+use strict;
+use warnings;
+
+my ($execname,$contacts_file)  = fileparse($0);
+$contacts_file = File::Spec->catfile(File::Spec->rel2abs($contacts_file), "contacts.vcf");
+my $delimiter     = "END:VCARD\n";
+my $hit           = 0;
+my $match         = 0;
+my $numargs       = $#ARGV + 1;
+
+if ($numargs == 0) {
+	print "Findcontact in vcf file (using $contacts_file).\n";
+	print "Usage: $execname <regex1> <regex2> ...\n";
+	exit 1;
+}
+
+open(DAT,"$contacts_file") || die("Fatal: Cannot open $contacts_file file");
+	my @file = <DAT>;
+close(DAT);
+
+my $vcfs = join('',@file);
+my @vcfs = split(/$delimiter/,$vcfs);
+
+foreach my $vcf (@vcfs)
+{
+	$match = 0;
+	foreach my $argv (@ARGV) {
+		if ($vcf =~ /$argv/i) {	$match++; }
+	}
+	if ($match == $numargs) {
+		if ($hit > 0) { print "\n"; }
+		$_ = $vcf;
+		# clean cruft
+		$_ =~ s/BEGIN:VCARD\n//;
+		$_ =~ s/VERSION:.*?\n//;
+		$_ =~ s/PRODID:.*?\n//;
+		$_ =~ s/PHOTO[:;].*?\n//;
+		$_ =~ s/UID:.*?\n//;
+		$_ =~ s/X-RADICALE-NAME:.*?\n//;
+		$_ =~ s/;+/;/g;
+		$_ =~ s/;\n/\n/g;
+		$_ =~ s/:;/:/g;
+		print "$_";
+		$hit++
+	}
+}
+
+if ($hit > 0) { print "\n"; }
+print "Found $hit in " . scalar @vcfs . " records.\n";
+
+exit;
