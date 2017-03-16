@@ -29,7 +29,7 @@ It assumes Linux line endings in the `contacts.vcf` file (\n only). We never saw
 
 ## Usage
 
-`findcontact` takes an arbitrary number of arguments which all all regexes. All of the arguments to give must match to have a vcard shown. All matches are case-insensitive.
+`findcontact` takes an arbitrary number of arguments which are all regexes. All of the arguments to give must match to have a vcard shown. All matches are case-insensitive.
 
 Thus you can easily iterate:
 
