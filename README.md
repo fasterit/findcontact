@@ -29,7 +29,7 @@ It assumes Linux line endings in the `contacts.vcf` file (\n only). We never saw
 
 ## Usage
 
-`findcontact` takes an arbitrary number of arguments which are all regexes. All of the arguments to give must match to have a vcard shown. All matches are case-insensitive.
+`findcontact` takes an arbitrary number of arguments which are all regexes. All of the arguments given must match to have a vcard shown. All matches are case-insensitive.
 
 Thus you can easily iterate:
 
@@ -45,7 +45,7 @@ If you want to limit the fields printed, use grep:
 
     $ findcontact pizza | grep "^\(FN\|TEL\|$\|Found \)"
 
-Inside `findcontact` you'll find that the `VERSION`, `PRODID`, `PHOTO`, `UID` and `X-RADICALE-NAME` fields are removed form the output. If you need any of them or want to always remove further fields from output ... change the appropriate lines.
+Inside `findcontact` you'll find that the `VERSION`, `PRODID`, `PHOTO`, `UID` and `X-RADICALE-NAME` fields are removed from the output. If you need any of them or want to always remove further fields from output ... change the appropriate lines.
 
 ## Support
 
