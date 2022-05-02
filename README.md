@@ -12,7 +12,10 @@ Mirrored at https://github.com/fasterit/findcontact
 Obtaining a contacts.vcf depends on which CardDAV server / client you run.    
 With [radicale 1.x](http://radicale.org/) you could just copy the file off the server into the directory where your findcontact resides. Or copy / link findcontact into the correct radicale collections subdirectory.
 
-Unfortunately the radicale 2.x branch switched to a [file-per-contact storage system](https://radicale.org/2.1.html#documentation/migration-from-1xx-to-2xx/storage) that needs some `cat` magic to produce a single .vcf file again.
+Unfortunately radicale version 2 (and later) switched to a [file-per-contact storage system](https://radicale.org/2.1.html#documentation/migration-from-1xx-to-2xx/storage) that needs some magic to produce a single .vcf file again,
+e.g. using GNU sed to make sure each VCARD ends with a \n:
+
+    $ sed -e '$G' /var/lib/radicale/collections/collection-root/user/contacts.vcf/* > ~/contacts.vcf
 
 Every .vcf client decides on a specific set of attributes to support and the [Inverse Sogo Connector](https://sogo.nu/download.html#/frontends) everybody uses for getting the Thunderbird address book synced can't search over all fields. So if you want to search for a phone number you're out of luck. Unless you run findcontact :).
 
